@@ -2,6 +2,18 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 require("dotenv").config();
+
+// chat 
+
+const server = require("http").createServer(app);
+const io = require('socket.io')(server, {
+  cors: {
+    origin: "*"
+  }
+});
+
+// chat 
+
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const port = process.env.PORT || 5000;
 //Midddle Ware
@@ -16,6 +28,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 
 async function run() {
+
   try {
     await client.connect();
     
@@ -32,7 +45,18 @@ async function run() {
     });
  
 
+
+    io.on("connection", (socket) => {
+      console.log('hello socket', socket);
+    
+      socket.on("chat", (payload) => {
+        console.log('hello payload', payload);
+        io.emit("chat", payload)
+      });
+    });
+    
    
+
 
 
 
@@ -45,6 +69,6 @@ app.get("/", (req, res) => {
   res.send("Webb School...");
 });
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
