@@ -4,7 +4,6 @@ const app = express();
 require("dotenv").config();
 
 // chat 
-
 const server = require("http").createServer(app);
 const io = require('socket.io')(server, {
   cors: {
@@ -31,7 +30,7 @@ async function run() {
 
   try {
     await client.connect();
-    
+
     const seviceCollection = client.db("five-minite-school").collection("service");
 
 
@@ -43,19 +42,16 @@ async function run() {
       const course = await cursor.toArray();
       res.send(course);
     });
- 
+
 
 
     io.on("connection", (socket) => {
-      console.log('hello socket', socket);
-    
       socket.on("chat", (payload) => {
-        console.log('hello payload', payload);
         io.emit("chat", payload)
       });
     });
-    
-   
+
+
 
 
 
